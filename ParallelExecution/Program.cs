@@ -19,7 +19,22 @@ namespace ParallelExecution
 
             var files = Directory.GetFiles(folderName);
 
-            //Parallel.ForEach<string>(files, GetAndCount);
+            //Parallel.Foreach
+            int totalAndCntForEach = 0;
+            Parallel.ForEach<string>(files, (file =>
+            {
+                int andCount = 0;
+
+                string text = File.ReadAllText(file);
+                var andMatches = Regex.Matches(text, "and");
+                andCount = andMatches.Count;
+
+                Console.WriteLine($"File {file} contains {andCount} 'and'");
+                totalAndCntForEach += andCount;
+            }));
+            Console.WriteLine($"Total 'and' count is {totalAndCntForEach}");
+
+            //PLINQ
             var processedFiles = files
                                 .AsParallel();
 
@@ -40,6 +55,7 @@ namespace ParallelExecution
             var andMatches = Regex.Matches(text, "and");
             andCount = andMatches.Count;
 
+            Console.WriteLine($"File {file} contains {andCount} 'and'");
             totalAndCount += andCount;
         }
     }
